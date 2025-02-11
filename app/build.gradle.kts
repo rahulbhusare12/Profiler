@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -64,6 +65,8 @@ dependencies {
     implementation(libs.compose.nav)
     implementation(libs.coil.kt)
     implementation(libs.dagger.hilt)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
     kapt(libs.kapt.hilt)
 
     testImplementation(libs.junit)
