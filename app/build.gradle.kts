@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.dagger.hilt)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore)
     kapt(libs.kapt.hilt)
 
     testImplementation(libs.junit)
