@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()

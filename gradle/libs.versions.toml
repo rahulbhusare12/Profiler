@@ -19,10 +19,10 @@ firebase-bom = "32.8.1"
 
 [libraries]
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
-compose-nav={group="androidx.navigation",name ="navigation-compose",version.ref="nav_version"}
-coil-kt ={group="io.coil-kt",name="coil-compose",version.ref="coil_version"}
+compose-nav = { group = "androidx.navigation", name = "navigation-compose", version.ref = "nav_version" }
+coil-kt = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil_version" }
 dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt_version" }
-kapt-hilt={group= "com.google.dagger",name="hilt-compiler",version.ref="hilt_version"}
+kapt-hilt = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt_version" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -47,4 +47,6 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt_version" }
+
 

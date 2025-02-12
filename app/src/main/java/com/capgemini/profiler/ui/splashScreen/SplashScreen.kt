@@ -24,9 +24,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.capgemini.profiler.R
 import com.capgemini.profiler.ui.nav.Screen
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
-fun SplashScreen(navController: NavController, viewModel: SplashViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun SplashScreen(navController: NavController, viewModel: SplashViewModel) {
     val isLoading by viewModel.isLoading.collectAsState()
 
     LaunchedEffect(isLoading) {

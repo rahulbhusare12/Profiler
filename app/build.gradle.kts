@@ -3,8 +3,12 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
     alias(libs.plugins.google.gms.google.services)
-}
+    alias(libs.plugins.dagger.hilt)
 
+}
+kapt {
+    correctErrorTypes = true
+}
 android {
     namespace = "com.capgemini.profiler"
     compileSdk = 35
@@ -32,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_19
-        targetCompatibility = JavaVersion.VERSION_19
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "19"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
@@ -49,6 +53,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
