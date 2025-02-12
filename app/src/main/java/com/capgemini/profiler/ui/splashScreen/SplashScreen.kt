@@ -49,11 +49,11 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.profileimg), // Replace with your logo
-                contentDescription = "Splash Logo",
+                painter = painterResource(id = R.drawable.profileimg),
+                contentDescription = "App Logo",
                 modifier = Modifier.size(150.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp)) // Space between logo and text
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Profile App",
                 fontSize = 24.sp,
