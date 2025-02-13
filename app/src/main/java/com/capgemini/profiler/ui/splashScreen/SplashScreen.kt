@@ -21,18 +21,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.capgemini.profiler.R
 import com.capgemini.profiler.ui.nav.Screen
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
-fun SplashScreen(navController: NavController, viewModel: SplashViewModel) {
+fun SplashScreen(navController: NavController, viewModel: SplashViewModel= hiltViewModel()) {
     val isLoading by viewModel.isLoading.collectAsState()
 
     LaunchedEffect(isLoading) {
         if (!isLoading) {
-            navController.navigate(Screen.Home.route) {
+            navController.navigate(Screen.LoginOption.route) {
                 popUpTo(Screen.Splash.route) { inclusive = true }
             }
         }

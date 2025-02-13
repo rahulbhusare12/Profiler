@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Profiler</string>
+    <string name="btn_admin_login_label">Login with Admin</string>
+    <string name="btn_user_login_label">Login with User</string>
 </resources>
