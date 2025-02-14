@@ -29,11 +29,12 @@ import com.capgemini.profiler.ui.nav.Screen
 @Composable
 fun SplashScreen(navController: NavController, viewModel: SplashViewModel= hiltViewModel()) {
     val isLoading by viewModel.isLoading.collectAsState()
+    val navigateTo by viewModel.navigateTo.collectAsState()
 
-    LaunchedEffect(isLoading) {
-        if (!isLoading) {
-            navController.navigate(Screen.LoginOption.route) {
-                popUpTo(Screen.Splash.route) { inclusive = true }
+    LaunchedEffect(navigateTo) {
+        navigateTo?.let {
+            navController.navigate(it) {
+                popUpTo(Screen.Splash.route) { inclusive = true } // Remove Splash from back stack
             }
         }
     }

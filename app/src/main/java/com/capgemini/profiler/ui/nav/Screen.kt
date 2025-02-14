@@ -6,4 +6,5 @@ sealed class Screen(val route: String) {
     object Authentication : Screen("authentication_screen/{userType}") {
         fun passUserType(userType: String) = "authentication_screen/$userType"
     }
+    object AdminDashBoard : Screen("admin_dash_board_screen")
 }

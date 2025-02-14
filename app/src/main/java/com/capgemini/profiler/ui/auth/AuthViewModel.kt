@@ -3,6 +3,7 @@ package com.capgemini.profiler.ui.auth
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.capgemini.profiler.data.UserPreferences
 import com.capgemini.profiler.domain.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val authUseCase: AuthUseCase,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthState>(AuthState.Idle)
@@ -38,6 +40,10 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             authUseCase.verifyCredit(userName,passWord).collect { state ->
                 _uiState.value = state
+                if (state is AuthState.Success) {
+                    userPreferences.saveLoginState(true, userName, passWord)
+                }
+
             }
         }
     }

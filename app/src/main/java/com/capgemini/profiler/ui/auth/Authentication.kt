@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.capgemini.profiler.ui.nav.Screen
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -65,7 +66,7 @@ fun AuthenticationScreen(
                 { userName = it },
                 { password = it }) { viewModel.checkAdminCredentials(userName, password) }
 
-            is AuthState.Success -> SuccessMessage("Login Success")
+            is AuthState.Success -> navController.navigate(Screen.AdminDashBoard.route)
             is AuthState.Error -> ErrorMessage((uiState as AuthState.Error).message)
         }
     }
