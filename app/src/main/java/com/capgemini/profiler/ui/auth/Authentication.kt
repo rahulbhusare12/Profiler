@@ -14,7 +14,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -41,6 +42,8 @@ fun AuthenticationScreen(
 
     var phoneNumber by remember { mutableStateOf("") }
     var otp by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -50,67 +53,90 @@ fun AuthenticationScreen(
         verticalArrangement = Arrangement.Center
     ) {
         when (uiState) {
-            is AuthState.Loading -> {
-                CircularProgressIndicator()
-            }
-
+            is AuthState.Loading -> CircularProgressIndicator()
             is AuthState.Idle -> PhoneInputSection(
-                phoneNumber = phoneNumber,
-                onPhoneChange = { phoneNumber = it },
-                onSendOtp = { viewModel.sendOtp(phoneNumber, context) },
-                isLoading = uiState is AuthState.Loading
-            )
+                phoneNumber,
+                { phoneNumber = it }) { viewModel.sendOtp(phoneNumber, context) }
 
-            is AuthState.OtpSent -> OtpInputSection(
-                otp = otp,
-                onOtpChange = { otp = it },
-                onVerifyOtp = { viewModel.verifyOtp(otp) }
-            )
+            is AuthState.OtpSent -> OtpInputSection(otp, { otp = it }) { viewModel.verifyOtp(otp) }
+            is AuthState.CheckCred -> CredentialInputSection(
+                userName,
+                password,
+                { userName = it },
+                { password = it }) { viewModel.checkAdminCredentials(userName, password) }
 
-            is AuthState.Success ->  SuccessMessage(message = "Login Success")
-
+            is AuthState.Success -> SuccessMessage("Login Success")
             is AuthState.Error -> ErrorMessage((uiState as AuthState.Error).message)
         }
     }
 }
 
 @Composable
-fun PhoneInputSection(
-    phoneNumber: String,
-    onPhoneChange: (String) -> Unit,
-    onSendOtp: () -> Unit,
-    isLoading: Boolean
-) {
-    OutlinedTextField(
+fun PhoneInputSection(phoneNumber: String, onPhoneChange: (String) -> Unit, onSendOtp: () -> Unit) {
+    InputField(
         value = phoneNumber,
         onValueChange = onPhoneChange,
-        label = { Text("Enter Phone Number") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-        singleLine = true
+        label = "Enter Phone Number",
+        keyboardType = KeyboardType.Phone
     )
     Spacer(modifier = Modifier.height(16.dp))
-    Button(onClick = onSendOtp, enabled = !isLoading) {
-        Text("Send OTP")
-    }
+    ActionButton("Send OTP", onSendOtp)
 }
 
 @Composable
-fun OtpInputSection(
-    otp: String,
-    onOtpChange: (String) -> Unit,
-    onVerifyOtp: () -> Unit
-) {
-    OutlinedTextField(
+fun OtpInputSection(otp: String, onOtpChange: (String) -> Unit, onVerifyOtp: () -> Unit) {
+    InputField(
         value = otp,
         onValueChange = onOtpChange,
-        label = { Text("Enter OTP") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        singleLine = true
+        label = "Enter OTP",
+        keyboardType = KeyboardType.Number
     )
     Spacer(modifier = Modifier.height(16.dp))
-    Button(onClick = onVerifyOtp) {
-        Text("Verify OTP")
-    }
+    ActionButton("Verify OTP", onVerifyOtp)
+}
+
+@Composable
+fun CredentialInputSection(
+    userName: String,
+    password: String,
+    onUserChange: (String) -> Unit,
+    onPassChange: (String) -> Unit,
+    onLogin: () -> Unit
+) {
+    InputField(value = userName, onValueChange = onUserChange, label = "Enter Username")
+    Spacer(modifier = Modifier.height(16.dp))
+    InputField(
+        value = password,
+        onValueChange = onPassChange,
+        label = "Enter Password",
+        keyboardType = KeyboardType.Password,
+        isPassword = true
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    ActionButton("Login", onLogin)
+}
+
+@Composable
+fun InputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    isPassword: Boolean = false
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        singleLine = true,
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
+    )
+}
+
+@Composable
+fun ActionButton(text: String, onClick: () -> Unit) {
+    Button(onClick = onClick) { Text(text) }
 }
 
 @Composable
@@ -120,5 +146,5 @@ fun ErrorMessage(message: String) {
 
 @Composable
 fun SuccessMessage(message: String) {
-    Text(text = message, color = Color.Red)
+    Text(text = message, color = Color.Green)
 }

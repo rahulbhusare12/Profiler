@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.dagger.hilt)
     implementation (libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.firebase.firestore.ktx)
     kapt(libs.kapt.hilt)
 
     testImplementation(libs.junit)
@@ -84,5 +85,6 @@ dependencies {
 
     implementation (libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
 
 }

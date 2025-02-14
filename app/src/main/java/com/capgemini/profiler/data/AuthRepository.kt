@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
     suspend fun sendOtp(phoneNumber: String, activity: ComponentActivity): Flow<AuthState>
     suspend fun verifyOtp(otp: String): Flow<AuthState>
+    suspend fun checkAdminCredentials(userName: String, passWord:String): Flow<AuthState>
 }

@@ -16,4 +16,8 @@ class AuthUseCase @Inject constructor(
     suspend fun verifyOtp(otp: String): Flow<AuthState> {
         return repository.verifyOtp(otp)
     }
+
+    suspend fun verifyCredit(userName: String,passWord:String): Flow<AuthState> {
+        return repository.checkAdminCredentials(userName,passWord)
+    }
 }

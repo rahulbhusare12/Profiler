@@ -7,20 +7,27 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 class AuthRepositoryImpl @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : AuthRepository {
 
     private var storedVerificationId: String? = null
     private var resendToken: PhoneAuthProvider.ForceResendingToken? = null
 
-    override suspend fun sendOtp(phoneNumber: String, activity: ComponentActivity): Flow<AuthState> = callbackFlow {
+    override suspend fun sendOtp(
+        phoneNumber: String,
+        activity: ComponentActivity
+    ): Flow<AuthState> = callbackFlow {
         trySend(AuthState.Loading)
 
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -34,7 +41,10 @@ class AuthRepositoryImpl @Inject constructor(
                 close()
             }
 
-            override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
                 storedVerificationId = verificationId
                 resendToken = token
                 trySend(AuthState.OtpSent)
@@ -42,7 +52,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
         val options = PhoneAuthOptions.newBuilder(auth)
-            .setPhoneNumber("+1"+phoneNumber)
+            .setPhoneNumber("+1" + phoneNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(activity)
             .setCallbacks(callbacks)
@@ -50,7 +60,7 @@ class AuthRepositoryImpl @Inject constructor(
 
         PhoneAuthProvider.verifyPhoneNumber(options)
 
-        awaitClose {  }
+        awaitClose { }
     }
 
     override suspend fun verifyOtp(otp: String): Flow<AuthState> = callbackFlow {
@@ -60,7 +70,7 @@ class AuthRepositoryImpl @Inject constructor(
         credential?.let {
             auth.signInWithCredential(it).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    trySend(AuthState.Success)
+                    trySend(AuthState.CheckCred)
                 } else {
                     trySend(AuthState.Error("Login Failed"))
                 }
@@ -72,4 +82,27 @@ class AuthRepositoryImpl @Inject constructor(
         }
         awaitClose { }
     }
+
+    override suspend fun checkAdminCredentials(useName: String, passWord: String): Flow<AuthState> =
+        callbackFlow {
+            trySend(AuthState.Loading)
+            firestore.collection("admins")
+                .whereEqualTo("userName", useName)
+                .whereEqualTo("password", passWord)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        trySend(AuthState.Success)
+                    } else {
+                        trySend(AuthState.Error("Invalid Admin Credentials"))
+                    }
+                    close()
+                }
+                .addOnFailureListener { e ->
+                    trySend(AuthState.Error(e.message ?: "Error fetching admin details"))
+                    close()
+                }
+
+            awaitClose { }
+        }
 }
